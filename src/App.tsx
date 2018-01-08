@@ -1,22 +1,32 @@
 import * as React from 'react';
+import {Stage, Layer, Rect} from 'react-konva'
 import './App.css';
 
-const logo = require('./logo.svg');
-
 class App extends React.Component {
+  state = {
+    color: 'blue'
+  }
   render() {
     return (
       <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.tsx</code> and save to reload.
-        </p>
+        <Stage width={window.innerWidth} height={window.innerHeight} backgroundcolor={0x1099bb}>
+          <Layer>
+            <Rect
+              x={50}
+              y={50}
+              width={50}
+              height={50}
+              fill={this.state.color}
+              shadowBlur={10}
+              onClick={this.handleClick}
+              />
+            </Layer>
+        </Stage>
+        
       </div>
     );
   }
 }
+
 
 export default App;
