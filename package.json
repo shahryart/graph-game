@@ -12,7 +12,8 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-konva": "^1.6.4",
-    "react-scripts-ts": "2.8.0"
+    "react-scripts-ts": "2.8.0",
+    "react-sigma": "^1.2.30"
   },
   "scripts": {
     "start": "react-scripts-ts start",
