@@ -28,13 +28,27 @@ class GraphInitializer extends React.Component<any, any> {
         >
           <RelativeSize initialSize={20}/>
           <RandomizeNodePositions/>
+          <UpdateNodeProps nodes={this.props.nodes}/>
         </Sigma>
     );
   }
-  componentDidUpdate(prevProps: any, prevState: any) {
-   
-   
+  
+}
+class UpdateNodeProps extends React.Component<any, any> {
+
+  componentWillReceiveProps({ sigma, nodes }: any) {
+    sigma.refresh();
+    //sigma.graph.nodes().forEach((n: any) => {
+    //  var updated = nodes.find((e: any) => e.id === n.id);
+     // Object.assign(n, updated);
+    //});
+
   }
+
+  render() {
+    return null;
+  }
+
 }
 
 class Graph extends React.Component {
@@ -47,11 +61,6 @@ class Graph extends React.Component {
     marker: '',
 
   };
-  componentDidUpdate(prevProps: any, prevState: any) {
-    console.log('graph prevProps', prevProps);
-    console.log('graph prevState', prevState);
-
-  }
 
   constructor(props: any) {
     super(props);
@@ -68,10 +77,6 @@ class Graph extends React.Component {
   }
     
   handleClick(e: any) {
-
-    //if (this.state.marker === e.data.node.id) {
-    //  return;
-    //}
 
     let edgeNodes = this.state.myGraph.edges.slice();
    
