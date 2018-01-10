@@ -5,14 +5,16 @@ import './App.css';
 type Node = {
   id: string,
   color: string,
+  timeSteps: number,
 };
+const timeSteps = 3;
 
 class Graph extends React.Component {
   state = {
 
     myGraph : {nodes: [
-        {id: 'n1', color: '#ff0000'}, 
-        {id: 'n2', color: '#ff0000'}], 
+        {id: 'n1', color: '#ff0000', timeSteps: timeSteps}, 
+        {id: 'n2', color: '#ff0000', timeSteps: timeSteps}], 
         edges: [{id: 'e1', source: 'n1', target: 'n2'}]},
     marker: '',
 
@@ -25,11 +27,13 @@ class Graph extends React.Component {
     return (
 
         <Sigma 
+          renderer="canvas"
           style={{width: '800px', height: '800px'}} 
           graph={this.state.myGraph} 
           settings={{drawEdges: true, clone: false,
-                     edgeColor: 'default'}}
-          onClickNode={this.handleClick}
+                     edgeColor: 'default',
+                     enableHovering: false}}
+          onClickNode={(e: any) => this.handleClick(e)}
         >
           <RelativeSize initialSize={15}/>
           <RandomizeNodePositions/>
@@ -38,16 +42,33 @@ class Graph extends React.Component {
   }
   handleClick(e: any) {
 
+    //if (this.state.marker === e.data.node.id) {
+    //  return;
+    //}
+
     let edgeNodes = this.state.myGraph.edges;
-    let graphNodes = this.changeColor(e.data.node.id);
+   
+    let graphNodes = this.changeColor(e.data.node.id, this.state.myGraph.nodes.slice());
+    graphNodes = this.decrementTimer(e.data.node.id, this.state.marker, graphNodes);
     let markerChange = this.setMarker(e.data.node.id);
     this.setState({myGraph: {nodes: graphNodes, edges: edgeNodes}, marker: markerChange});
+   
     console.log(this.state.myGraph);
 
   }
 
-  changeColor(id: string): Array<Node> {
-    let graphNodes = this.state.myGraph.nodes.slice();
+  decrementTimer(toMove: string, markerAt: string, graphNodes: Array<Node>): Array<Node> {
+    graphNodes.forEach((value) => {
+      if (value.id === markerAt || value.id === toMove) {
+        value.timeSteps = timeSteps;
+      } else {
+        value.timeSteps--;
+      }
+    });
+    return graphNodes;
+  }
+
+  changeColor(id: string, graphNodes: Array<Node>): Array<Node> {
     graphNodes.forEach((value) => {
       if (value.id === id) {
         value.color = '#0000ff';
