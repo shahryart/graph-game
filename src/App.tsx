@@ -9,7 +9,7 @@ class App extends React.Component {
         <div className="App-header">
           <h2>nice</h2>
         </div>
-        <p className="Graph">
+        <p className="Planar Graph Game">
         <Graph
           timeSteps={1}
         />

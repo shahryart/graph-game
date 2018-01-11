@@ -15,8 +15,6 @@ type Edge = {
   source: string,
   target: string,
 };
-
-
 class GraphInitializer extends React.Component<any, any> {
 
   constructor(props: any) {
@@ -26,14 +24,15 @@ class GraphInitializer extends React.Component<any, any> {
     return (
       <Sigma
           renderer="canvas"
-          style={{width: '800px', height: '800px'}} 
+          style={{width: '600px', height: '400px'}} 
           graph={this.props.graph} 
           settings={{drawEdges: true, clone: false,
                      edgeColor: 'default',
-                     enableHovering: false}}
+                     enableHovering: false,
+                     enableCamera: false}}
           onClickNode={(e: any) => this.props.onClickNode(e)}
       >
-          <RelativeSize initialSize={20}/>
+          <RelativeSize initialSize={15}/>
           <RandomizeNodePositions/>
           <UpdateNodeProps nodes={this.props.nodes}/>
       </Sigma>
