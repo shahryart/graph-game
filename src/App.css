@@ -18,6 +18,22 @@
   font-size: large;
 }
 
+.App-input {
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.App-textarea {
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.App-select {
+  margin-bottom: 1rem;
+  display: block;
+}
+
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
