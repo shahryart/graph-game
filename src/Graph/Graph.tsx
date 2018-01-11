@@ -8,6 +8,7 @@ type Node = {
   id: string,
   color: string,
   timeSteps: number,
+  label: string,
 };
 type Edge = {
   id: string,
@@ -62,9 +63,9 @@ export class Graph extends React.Component<any, any> {
   state = {
 
     myGraph : {nodes: [
-        {id: '1', color: Red, timeSteps: this.timeSteps}, 
-        {id: '2', color: Red, timeSteps: this.timeSteps},
-        {id: '3', color: Red, timeSteps: this.timeSteps}],
+        {id: '1', color: Red, timeSteps: 0, label: ''}, 
+        {id: '2', color: Red, timeSteps: 0, label: ''},
+        {id: '3', color: Red, timeSteps: 0, label: ''}],
         edges: [{id: 'e1', source: '1', target: '2'},
                 {id: 'e2', source: '2', target: '3'},
                 {id: 'e3', source: '1', target: '3'}]},
@@ -77,6 +78,10 @@ export class Graph extends React.Component<any, any> {
     this.contaminatedArray = new Array(3);
     this.contaminatedArray.fill(1);
     this.timeSteps = props.timeSteps;
+    this.state.myGraph.nodes.forEach((value) => {
+      value.timeSteps = this.timeSteps;
+      value.label = value.timeSteps.toString();
+    });
    
   }
   
@@ -105,6 +110,7 @@ export class Graph extends React.Component<any, any> {
     graphNodes.forEach((value) => {
       if (value.id === markerAt || value.id === toMove) {
         value.timeSteps = this.timeSteps;
+        value.label = value.timeSteps.toString();
       } else {
         let adj = 0;
         edges.forEach((edge: any) => {
@@ -124,6 +130,7 @@ export class Graph extends React.Component<any, any> {
             value.color = Red;
             value.timeSteps = this.timeSteps;
           }
+          value.label = value.timeSteps.toString();
         }
       }
     });
