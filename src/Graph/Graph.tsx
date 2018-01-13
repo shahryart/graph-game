@@ -61,13 +61,7 @@ export class Graph extends React.Component<any, any> {
   contaminatedArray: Array<number>;
   state = {
 
-    myGraph : {nodes: [
-        {id: '1', color: Red, timeSteps: 0, label: ''}, 
-        {id: '2', color: Red, timeSteps: 0, label: ''},
-        {id: '3', color: Red, timeSteps: 0, label: ''}],
-        edges: [{id: 'e1', source: '1', target: '2'},
-                {id: 'e2', source: '2', target: '3'},
-                {id: 'e3', source: '1', target: '3'}]},
+    myGraph : this.props.graph,
     marker: '',
   };
 

@@ -2,16 +2,22 @@ import * as React from 'react';
 import './App.css';
 import { Graph } from './Graph/Graph';
 import Dropdown from 'react-dropdown';
+import { readFileSync } from 'fs';
 
-const options = [ 'default-triangle'];
+
+
+const graphFile = 'graph.json';
+
+let graphs = JSON.parse(readFileSync(graphFile, 'utf-8'));
+
+
+const options = graphs.map((value: any) => value.name);
 
 class App extends React.Component {
   timeSteps: number = 0;
   state = {
-   
-    graph: undefined,
+    graph: {nodes: graphs[0].nodes, edges: graphs[1].edges},
     timeSteps: 1,
-
   };
   constructor(props: any) {
     super(props);
