@@ -28,7 +28,7 @@ class App extends React.Component {
             onChange={this.onSelect}
             placeholder="Select an option" 
           />
-          <input ref="input" defaultValue="1" onChange={this.handleTextChange}/>
+          <input defaultValue="1" onChange={this.handleTextChange}/>
           <button type="change" className="btn btn-primary" onClick={this.handleClick}>Change</button>
         </div>
         <p className="Planar Graph Game">
@@ -41,7 +41,6 @@ class App extends React.Component {
   }
   handleTextChange(e: any): void {
     this.timeSteps = parseInt(e.target.value, 10);
-
   }
   handleClick(): void {
     let i = this.timeSteps;
