@@ -44,10 +44,6 @@ class UpdateNodeProps extends React.Component<any, any> {
 
   componentWillReceiveProps({ sigma, nodes }: any) {
     sigma.refresh();
-    //sigma.graph.nodes().forEach((n: any) => {
-    //  var updated = nodes.find((e: any) => e.id === n.id);
-     // Object.assign(n, updated);
-    //});
   }
 
   render() {
@@ -71,7 +67,7 @@ export class Graph extends React.Component<any, any> {
     this.contaminatedArray = new Array(3);
     this.contaminatedArray.fill(1);
     this.timeSteps = props.timeSteps;
-    this.state.myGraph.nodes.forEach((value) => {
+    this.state.myGraph.nodes.forEach((value: any) => {
       value.timeSteps = this.timeSteps;
       value.label = value.timeSteps.toString();
     });
@@ -145,7 +141,7 @@ export class Graph extends React.Component<any, any> {
       currMarker = id;
       
     } else {
-      this.state.myGraph.edges.forEach((value) => {
+      this.state.myGraph.edges.forEach((value: any) => {
         if (value.source === currMarker && value.target === id) {
           currMarker = value.target;
         } else if (value.source === id && value.target === currMarker) {

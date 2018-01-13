@@ -2,27 +2,23 @@ import * as React from 'react';
 import './App.css';
 import { Graph } from './Graph/Graph';
 import Dropdown from 'react-dropdown';
-import { readFileSync } from 'fs';
-
-
-
-const graphFile = 'graph.json';
-
-let graphs = JSON.parse(readFileSync(graphFile, 'utf-8'));
-
+import { graphs } from './GraphData';
 
 const options = graphs.map((value: any) => value.name);
 
 class App extends React.Component {
-  timeSteps: number = 0;
-  state = {
-    graph: {nodes: graphs[0].nodes, edges: graphs[1].edges},
+ 
+ 
+  state = { 
+    selectedGraph: 'default',
+    graph: {nodes: graphs[0].nodes, edges: graphs[0].edges},
     timeSteps: 1,
   };
   constructor(props: any) {
     super(props);
     this.handleTextChange = this.handleTextChange.bind(this);
-    this.handleClick = this.handleClick.bind(this);
+    this.onSelect = this.onSelect.bind(this);
+
   }
   render() {
     return (
@@ -32,13 +28,13 @@ class App extends React.Component {
           <Dropdown 
             options={options} 
             onChange={this.onSelect}
-            placeholder="Select an option" 
+            placeholder={this.state.selectedGraph}
           />
           <input defaultValue="1" onChange={this.handleTextChange}/>
-          <button type="change" className="btn btn-primary" onClick={this.handleClick}>Change</button>
         </div>
         <p className="Planar Graph Game">
         <Graph
+          graph={this.state.graph}
           timeSteps={this.state.timeSteps}
         />
         </p>
@@ -46,14 +42,24 @@ class App extends React.Component {
     );
   }
   handleTextChange(e: any): void {
-    this.timeSteps = parseInt(e.target.value, 10);
+  
+    let timeSteps = parseInt(e.target.value, 10);
+    this.setState({timeSteps: timeSteps});
   }
-  handleClick(): void {
-    let i = this.timeSteps;
-    this.setState({graph: undefined, timeSteps: i});
-  }
-  onSelect(): void {
-    return;
+ 
+  onSelect(e: any): void {
+    let selIdx = 0;
+    graphs.forEach((value, idx) => {
+      
+      if (value.name === e.label) {
+        console.log(value.name, e.label);
+        this.state.selectedGraph = value.name;
+        selIdx = idx;
+      }
+    });
+    console.log(graphs[selIdx]);
+    this.setState({graph: graphs[selIdx]});
+    
   }
 }
 export default App;
