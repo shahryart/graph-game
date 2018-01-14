@@ -71,13 +71,12 @@ export class Graph extends React.Component<any, any> {
       value.timeSteps = this.timeSteps;
       value.label = value.timeSteps.toString();
     });
-   
   }
   
   render() {
     return (
       <GraphInitializer
-        graph={this.state.myGraph}
+        graph={this.props.graph}
         onClickNode={this.handleClick}
       />
     );
