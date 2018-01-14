@@ -55,36 +55,29 @@ class UpdateNodeProps extends React.Component<any, any> {
 export class Graph extends React.Component<any, any> {
   timeSteps: number;
   contaminatedArray: Array<number>;
-  state = {
-
-    myGraph : this.props.graph,
-    marker: '',
-  };
 
   constructor(props: any) {
     super(props);
+    this.state = {
+     myGraph : this.props.graph,
+     marker: '',
+    };
     this.handleClick = this.handleClick.bind(this);
-    this.contaminatedArray = new Array(3);
-    this.contaminatedArray.fill(1);
-    this.timeSteps = props.timeSteps;
-    this.state.myGraph.nodes.forEach((value: any) => {
-      value.timeSteps = this.timeSteps;
-      value.label = value.timeSteps.toString();
-    });
+    this.state.myGraph = this.initialize(this.state.myGraph, props.timeSteps);
   }
   
   render() {
     return (
       <GraphInitializer
-        graph={this.props.graph}
+        graph={this.state.myGraph}
         onClickNode={this.handleClick}
       />
     );
   }
     
   handleClick(e: any) {
-
     let edges = this.state.myGraph.edges.slice();
+    console.log('graphs', this.props.graph, this.state.myGraph);
    
     let graphNodes = this.changeColor(e.data.node.id, this.state.myGraph.nodes.slice());
     graphNodes = this.adjustTimer(e.data.node.id, this.state.marker, graphNodes, edges);
@@ -150,5 +143,24 @@ export class Graph extends React.Component<any, any> {
     }
     return currMarker;
   }
-  
+
+  componentWillReceiveProps(props: any) {
+    console.log('graph component received props', props.graph);
+    let newGraph = this.initialize(props.graph, props.timeSteps);
+    this.setState({myGraph: newGraph, marker: ''}, () => {
+      console.log('state updated', this.state.myGraph);
+      console.log('supposed to receive', newGraph);
+    });
+  }
+
+  initialize(graph: any, timeSteps: number): any {
+    this.contaminatedArray = new Array(3);
+    this.contaminatedArray.fill(1);
+    this.timeSteps = this.props.timeSteps;
+    graph.nodes.forEach((value: any) => {
+      value.timeSteps = timeSteps;
+      value.label = value.timeSteps.toString(); 
+    });
+  }
+ 
 }

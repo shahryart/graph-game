@@ -17,7 +17,6 @@ export class Game extends React.Component {
     super(props);
     this.handleTextChange = this.handleTextChange.bind(this);
     this.onDropDownSelect = this.onDropDownSelect.bind(this);
-
   }
   render() {
     return (
@@ -41,7 +40,6 @@ export class Game extends React.Component {
     );
   }
   handleTextChange(e: any): void {
-  
     let timeSteps = parseInt(e.target.value, 10);
     this.setState({timeSteps: timeSteps});
   }
@@ -50,19 +48,13 @@ export class Game extends React.Component {
   onDropDownSelect(e: any): void {
     let newGraphIdx = 0;
     graphs.forEach((value, idx) => {
-      
       if (value.name === e.label) {
         console.log(value.name, e.label);
         this.state.selectedGraph = value.name;
         newGraphIdx = idx;
       }
     });
-    console.log('new graph', graphs[newGraphIdx]);
     this.setState({selectedGraph: e.label, graph: {nodes: graphs[newGraphIdx].nodes, 
-      edges: graphs[newGraphIdx].edges}}, 
-                  () => {
-       console.log('new state', this.state);
-     });
-    this.forceUpdate();
+      edges: graphs[newGraphIdx].edges}});
   }
 }
