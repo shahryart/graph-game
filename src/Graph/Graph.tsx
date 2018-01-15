@@ -19,13 +19,16 @@ class GraphInitializer extends React.Component<any, any> {
 
   constructor(props: any) {
     super(props);
+    this.state = {
+      renderGraph: this.props.graph,
+    };
   }
   render() {
     return (
       <Sigma
           renderer="canvas"
           style={{width: '600px', height: '400px'}} 
-          graph={this.props.graph} 
+          graph={this.state.renderGraph} 
           settings={{drawEdges: true, clone: false,
                      edgeColor: 'default',
                      enableHovering: false,
@@ -34,15 +37,24 @@ class GraphInitializer extends React.Component<any, any> {
       >
           <RelativeSize initialSize={15}/>
           <RandomizeNodePositions/>
-          <UpdateNodeProps nodes={this.props.nodes}/>
+          <UpdateNodeProps graph={this.state.renderGraph}/>
       </Sigma>
     );
   }
-  
+  componentWillReceiveProps(props: any) {
+    let newGraph = props.graph;
+    console.log('initializer component received props', newGraph);
+    this.setState({renderGraph: newGraph}, () => {
+      console.log('new state', this.state.renderGraph);
+    });
+  }
 }
+
 class UpdateNodeProps extends React.Component<any, any> {
 
-  componentWillReceiveProps({ sigma, nodes }: any) {
+  componentWillReceiveProps({ sigma, graph }: any) {
+    sigma.graph.clear();
+    sigma.graph.read(graph);
     sigma.refresh();
   }
 
@@ -161,6 +173,7 @@ export class Graph extends React.Component<any, any> {
       value.timeSteps = timeSteps;
       value.label = value.timeSteps.toString(); 
     });
+    return graph;
   }
  
 }

@@ -9,7 +9,7 @@ const options = graphs.map((value: any) => value.name);
 export class Game extends React.Component {
 
   state = { 
-    selectedGraph: 'default',
+    selectedGraph: 'starGraph',
     graph: {nodes: graphs[1].nodes, edges: graphs[1].edges},
     timeSteps: 1,
   };
