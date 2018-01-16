@@ -79,8 +79,6 @@ class UpdateNodeProps extends React.Component<any, any> {
 }
 
 export class Graph extends React.Component<any, any> {
-  timeSteps: number;
-  contaminatedArray: Array<number>;
 
   constructor(props: any) {
     super(props);
@@ -88,9 +86,11 @@ export class Graph extends React.Component<any, any> {
      graphKey: 0,
      myGraph : this.props.graph,
      marker: '',
+     contaminatedArray: new Array(this.props.graph.nodes.length).fill(1),
+     timeSteps: this.props.timeSteps,
     };
     this.handleClick = this.handleClick.bind(this);
-    this.state.myGraph = this.initialize(this.state.myGraph, props.timeSteps);
+    this.state.myGraph = this.initialize(this.state.myGraph, this.props.timeSteps);
   }
   
   render() {
@@ -105,42 +105,77 @@ export class Graph extends React.Component<any, any> {
     
   handleClick(e: any) {
     let edges = this.state.myGraph.edges.slice();
-    let graphNodes = this.changeColor(e.data.node.id, this.state.myGraph.nodes.slice());
-    graphNodes = this.adjustTimer(e.data.node.id, this.state.marker, graphNodes, edges);
+    let [graphNodes, contaminatedArray] = this.adjustTimer(e.data.node.id, 
+                                                           this.state.marker, 
+                                                           this.state.myGraph.nodes.slice(), 
+                                                           edges);
     let markerChange = this.setMarker(e.data.node.id);
-    this.setState({myGraph: {nodes: graphNodes, edges: edges}, marker: markerChange});
-    
+    console.log('change', contaminatedArray);
+
+    this.setState({
+      myGraph: {nodes: graphNodes, edges: edges},
+      marker: markerChange,
+      contaminatedArray: contaminatedArray
+    });
+  }
+  contaminated(id: string): boolean {
+    if (this.state.contaminatedArray[parseInt(id, 10)]) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  adjustTimer(toMove: string, markerAt: string, graphNodes: Array<Node>, edges: Array<Edge>): Array<Node> {
+  adjustTimer(toMove: string, markerAt: string, graphNodes: Array<Node>, edges: Array<Edge>): 
+  [Array<Node>, Array<number>] {
+    let contaminatedArray = this.state.contaminatedArray.slice();
+
     graphNodes.forEach((value) => {
+
       if (value.id === markerAt || value.id === toMove) {
-        value.timeSteps = this.timeSteps;
-        value.label = value.timeSteps.toString();
+
+        value.timeSteps = this.state.timeSteps;
+        value.label = '';
+        contaminatedArray[parseInt(value.id, 10)] = 0;
+        value.color = Blue;
+
       } else {
-        let adj = 0;
-        edges.forEach((edge: any) => {
-          if (edge.source === value.id) {
-            if (this.contaminatedArray[parseInt(edge.target, 10)]) {
-              adj = 1;
-            }
-          } else if (edge.target === value.id) {
-            if (this.contaminatedArray[parseInt(edge.source, 10)]) {
-              adj = 1;
-            }
-          }
-        });
-        if (adj === 1 && value.color === Blue) {
+
+        if (this.adjacentContaminated(edges, value) && !this.contaminated(value.id)) {
           value.timeSteps--;
           if (value.timeSteps === 0) {
             value.color = Red;
-            value.timeSteps = this.timeSteps;
+            value.timeSteps = this.state.timeSteps;
+            value.label = value.timeSteps.toString();
+            contaminatedArray[parseInt(value.id, 10)] = 1;
           }
-          value.label = value.timeSteps.toString();
+        }
+
+      }
+    });
+    return [graphNodes, contaminatedArray];
+  }
+  adjacentContaminated(edges: Array<Edge>, node: Node): boolean {
+
+    let adj = 0;
+
+    edges.forEach((edge: any) => {
+      if (edge.source === node.id) {
+        if (this.state.contaminatedArray[parseInt(edge.target, 10)]) {
+          adj = 1;
+        }
+      } else if (edge.target === node.id) {
+        if (this.state.contaminatedArray[parseInt(edge.source, 10)]) {
+          adj = 1;
         }
       }
     });
-    return graphNodes;
+
+    if (adj) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   changeColor(id: string, graphNodes: Array<Node>): Array<Node> {
@@ -172,18 +207,20 @@ export class Graph extends React.Component<any, any> {
   componentWillReceiveProps(props: any) {
     
     let newGraph = this.initialize(props.graph, props.timeSteps);
-    this.setState({graphKey: this.state.graphKey + 1, myGraph: newGraph, marker: ''});
+    this.setState({
+      graphKey: this.state.graphKey + 1, 
+      myGraph: newGraph, 
+      marker: '',
+    });
   }
 
   initialize(graph: any, timeSteps: number): any {
-    this.contaminatedArray = new Array(3);
-    this.contaminatedArray.fill(1);
-    this.timeSteps = this.props.timeSteps;
+
     graph.nodes.forEach((value: any) => {
       value.timeSteps = timeSteps;
-      value.label = value.timeSteps.toString(); 
     });
     return graph;
+
   }
  
 }
