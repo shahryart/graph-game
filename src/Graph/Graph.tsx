@@ -32,7 +32,10 @@ class GraphInitializer extends React.Component<any, any> {
           settings={{drawEdges: true, clone: false,
                      edgeColor: 'default',
                      enableHovering: false,
-                     enableCamera: false}}
+                     enableCamera: false,
+                     defaultNodeBorderColor: '#000',
+                     minNodeSize: 15,
+                     maxNodeSize: 15}}
           onClickNode={(e: any) => this.props.onClickNode(e)}
       >
       <GraphChild graph={this.state.renderGraph}/>
