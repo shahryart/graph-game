@@ -22,7 +22,7 @@ export class Game extends React.Component {
     return (
       <div className="App">
         <div className="App-header">
-          <h2>nice</h2>
+          <h2>not ready yet</h2>
           <Dropdown 
             options={options} 
             onChange={this.onDropDownSelect}

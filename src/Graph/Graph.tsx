@@ -20,6 +20,7 @@ class GraphInitializer extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
+      graphKey: this.props.graphKey,
       renderGraph: this.props.graph,
     };
   }
@@ -28,33 +29,43 @@ class GraphInitializer extends React.Component<any, any> {
       <Sigma
           renderer="canvas"
           style={{width: '600px', height: '400px'}} 
-          graph={this.state.renderGraph} 
           settings={{drawEdges: true, clone: false,
                      edgeColor: 'default',
                      enableHovering: false,
                      enableCamera: false}}
           onClickNode={(e: any) => this.props.onClickNode(e)}
       >
-          <RelativeSize initialSize={15}/>
-          <RandomizeNodePositions/>
+      <GraphChild graph={this.state.renderGraph}/>
+          <RelativeSize initialSize={15} key={this.state.graphKey}/>
+          <RandomizeNodePositions key={this.state.graphKey}/>
           <UpdateNodeProps graph={this.state.renderGraph}/>
       </Sigma>
     );
   }
   componentWillReceiveProps(props: any) {
     let newGraph = props.graph;
-    console.log('initializer component received props', newGraph);
-    this.setState({renderGraph: newGraph}, () => {
-      console.log('new state', this.state.renderGraph);
-    });
+    let newGraphKey = props.graphKey;
+    console.log('initializer component received props', newGraph, newGraphKey);
+    this.setState({graphKey: newGraphKey, renderGraph: newGraph});
   }
 }
-
-class UpdateNodeProps extends React.Component<any, any> {
-
+class GraphChild extends React.Component<any, any> {
+  constructor(props: any) {
+    super(props);
+    this.props.sigma.graph.read(props.graph);
+    this.props.sigma.refresh();
+  }
+  render() {
+    return null;
+  }
   componentWillReceiveProps({ sigma, graph }: any) {
-    sigma.graph.clear();
-    sigma.graph.read(graph);
+    this.props.sigma.graph.clear();
+    this.props.sigma.graph.read(graph);
+    this.props.sigma.refresh();
+  }
+}
+class UpdateNodeProps extends React.Component<any, any> {
+  componentWillReceiveProps({ sigma, graph }: any) {
     sigma.refresh();
   }
 
@@ -71,6 +82,7 @@ export class Graph extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
+     graphKey: 0,
      myGraph : this.props.graph,
      marker: '',
     };
@@ -81,6 +93,7 @@ export class Graph extends React.Component<any, any> {
   render() {
     return (
       <GraphInitializer
+        graphKey={this.state.graphKey}
         graph={this.state.myGraph}
         onClickNode={this.handleClick}
       />
@@ -89,14 +102,11 @@ export class Graph extends React.Component<any, any> {
     
   handleClick(e: any) {
     let edges = this.state.myGraph.edges.slice();
-    console.log('graphs', this.props.graph, this.state.myGraph);
-   
     let graphNodes = this.changeColor(e.data.node.id, this.state.myGraph.nodes.slice());
     graphNodes = this.adjustTimer(e.data.node.id, this.state.marker, graphNodes, edges);
     let markerChange = this.setMarker(e.data.node.id);
-    this.setState({myGraph: {nodes: graphNodes, edges: edges}, marker: markerChange}, () => {
-      console.log('rendered');
-    });
+    this.setState({myGraph: {nodes: graphNodes, edges: edges}, marker: markerChange});
+    
   }
 
   adjustTimer(toMove: string, markerAt: string, graphNodes: Array<Node>, edges: Array<Edge>): Array<Node> {
@@ -157,12 +167,9 @@ export class Graph extends React.Component<any, any> {
   }
 
   componentWillReceiveProps(props: any) {
-    console.log('graph component received props', props.graph);
+    
     let newGraph = this.initialize(props.graph, props.timeSteps);
-    this.setState({myGraph: newGraph, marker: ''}, () => {
-      console.log('state updated', this.state.myGraph);
-      console.log('supposed to receive', newGraph);
-    });
+    this.setState({graphKey: this.state.graphKey + 1, myGraph: newGraph, marker: ''});
   }
 
   initialize(graph: any, timeSteps: number): any {
