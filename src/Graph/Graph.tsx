@@ -102,8 +102,25 @@ export class Graph extends React.Component<any, any> {
       />
     );
   }
+  nodesConnected(markerAt: string, moveTo: string): boolean {
+    if (markerAt === '') {
+      return true;
+    }
+    let retVal: boolean = false;
+    this.state.myGraph.edges.forEach((value: Edge) => {
+      if (value.source === markerAt && value.target === moveTo
+      ||  value.target === markerAt && value.source === moveTo) {
+        retVal = true;
+      }
+    });
+    return retVal;
+  }
     
   handleClick(e: any) {
+    if (!this.nodesConnected(this.state.marker, e.data.node.id)) {
+      return;
+    }
+
     let edges = this.state.myGraph.edges.slice();
     let [graphNodes, contaminatedArray] = this.adjustTimer(e.data.node.id, 
                                                            this.state.marker, 
@@ -132,23 +149,25 @@ export class Graph extends React.Component<any, any> {
 
     graphNodes.forEach((value) => {
 
-      if (value.id === markerAt || value.id === toMove) {
+      if (value.id === toMove) {
 
         value.timeSteps = this.state.timeSteps;
-        value.label = '';
+        value.label = value.timeSteps.toString();
         contaminatedArray[parseInt(value.id, 10)] = 0;
         value.color = Blue;
 
       } else {
 
-        if (this.adjacentContaminated(edges, value) && !this.contaminated(value.id)) {
+        if (this.adjacentContaminated(edges, value) && !this.contaminated(value.id) && value.id !== markerAt) {
           value.timeSteps--;
           if (value.timeSteps === 0) {
             value.color = Red;
             value.timeSteps = this.state.timeSteps;
-            value.label = value.timeSteps.toString();
+            value.label = '';
             contaminatedArray[parseInt(value.id, 10)] = 1;
           }
+        } else if (!this.contaminated(value.id)) {
+          value.label = value.timeSteps.toString();
         }
 
       }
